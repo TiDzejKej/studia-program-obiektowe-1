@@ -1,0 +1,58 @@
+﻿<Window x:Class="StudiaZadanko.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local1="clr-namespace:StudiaZadanko"
+        mc:Ignorable="d"
+        Title="Lista znajomych" Height="720" Width="1280">
+  
+
+    <Grid>
+        <DataGrid Name="PersonList" AutoGenerateColumns="False" CellEditEnding="PersonList_CellEditEnding">
+          
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="ID" Binding="{Binding ID}" IsReadOnly="True"/>
+                <DataGridTextColumn Header="Imię" Binding="{Binding name}"/>
+                <DataGridTextColumn Header="Nazwisko" Binding="{Binding surname}"/>
+                <DataGridTextColumn Header="Numer telefonu" Binding="{Binding phone_number}"/>
+                <DataGridTextColumn Header="Adres" Binding="{Binding address}"/>
+                <DataGridTextColumn Header="E-mail" Binding="{Binding email}"/>
+                <DataGridTemplateColumn Header="Actions">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <Button Content="Usun" Click="DeleteMenuItem_Click">
+                                    <Button.Style>
+                                        <Style TargetType="Button">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding ID}" Value="{x:Null}">
+                                                    <Setter Property="Visibility" Value="Hidden" />
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding ID}" Value="0">
+                                                    <Setter Property="Visibility" Value="Hidden" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Button.Style>
+                                </Button>
+                                <Button Content="Dodaj" Click="AddMenuItem_Click">
+                                    <Button.Style>
+                                        <Style TargetType="Button">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding ID}" Value="0">
+                                                    <Setter Property="Visibility" Value="Visible" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Button.Style>
+                                </Button>
+                            </StackPanel>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+
+    </Grid>
+</Window>
