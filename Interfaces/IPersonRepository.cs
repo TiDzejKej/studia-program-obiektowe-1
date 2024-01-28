@@ -7,6 +7,5 @@ public interface IPersonRepository
 {
     void Add(Person person);
     IEnumerable<Person> GetAll();
-    void Update(Person person);
     void Delete(int id);
 }

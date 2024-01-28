@@ -13,7 +13,7 @@ namespace StudiaZadanko.Repositories
         {
             try
             {
-                DbConnection.Instance.ExecuteInsert(person, "persons");
+                DbConnection.Instance.ExecuteInsert(person);
             }
             catch (MySqlException err)
             {
@@ -44,12 +44,6 @@ namespace StudiaZadanko.Repositories
                 MessageBox.Show(err.Message);
                 throw;
             }
-        }
-
-
-        public void Update(Person person)
-        {
-            throw new NotImplementedException();
         }
 
       

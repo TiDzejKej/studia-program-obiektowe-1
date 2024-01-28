@@ -1,16 +1,16 @@
 ﻿using MySql.Data.MySqlClient;
 using System.Collections.Generic;
 using System;
-using System.Data;
 using System.Windows;
 using System.Reflection;
+using StudiaZadanko.Models.Core;
 using System.Diagnostics;
 
 public class DbConnection
 {
     private MySqlConnection connection;
     private string host = "localhost";
-    private string database = "my_friends";
+    private string database = "my_database";
     private string uid = "root";
     private string password = "password";
 
@@ -70,23 +70,32 @@ public class DbConnection
         }
     }
 
-    public void ExecuteInsert(object obj, string tableName)
+    public void ExecuteInsert(object obj)
     {
-        PropertyInfo[] properties = obj.GetType().GetProperties();
-        List<string> columnNames = new List<string>();
-        List<string> values = new List<string>();
-        List <MySqlParameter> parameters = new List<MySqlParameter>();
-        foreach (var property in properties)
-        { 
-            columnNames.Add(property.Name);
-            values.Add($"@{property.Name}");
-            parameters.Add(new MySqlParameter($"@{property.Name}", property.GetValue(obj) ?? DBNull.Value));
-        }
+       
+            BaseModel entity = (BaseModel)obj;
+            PropertyInfo[] properties = obj.GetType().GetProperties();
+            List<string> columnNames = new List<string>();
+            List<string> values = new List<string>();
+            List<MySqlParameter> parameters = new List<MySqlParameter>();
+            foreach (var property in properties)
+            {
+                Debug.WriteLine(property.Name);
+                if (property.Name != "db_table")
+                {
+                    columnNames.Add(property.Name);
+                    values.Add($"@{property.Name}");
+                    parameters.Add(new MySqlParameter($"@{property.Name}", property.GetValue(entity) ?? DBNull.Value));
+                }
 
-        string query = $"INSERT INTO {tableName} ({string.Join(", ", columnNames)}) VALUES ({string.Join(", ", values)});";
-  
-        Instance.OpenConnection();
-        using (MySqlCommand command = new MySqlCommand(query, connection))
+            }
+
+            string query = $"INSERT INTO {entity.db_table} ({string.Join(", ", columnNames)}) VALUES ({string.Join(", ", values)});";
+
+
+
+            Instance.OpenConnection();
+            using (MySqlCommand command = new MySqlCommand(query, connection))
             {
                 foreach (dynamic param in parameters)
                 {
@@ -95,8 +104,9 @@ public class DbConnection
 
                 command.ExecuteNonQuery();
             }
-        
-        Instance.CloseConnection();
+
+            Instance.CloseConnection();
+       
     }
 
     public void ExecuteDelete(int id, string tableName)
@@ -131,11 +141,15 @@ public class DbConnection
                         var item = new T();
                         foreach (var property in properties)
                         {
-                            var value = reader[property.Name];
-                            if (value != DBNull.Value)
+                            if(property.Name != "db_table")
                             {
-                                property.SetValue(item, value);
+                                var value = reader[property.Name];
+                                if (value != DBNull.Value)
+                                {
+                                    property.SetValue(item, value);
+                                }
                             }
+                            
                         }
                         items.Add(item);
                     }
